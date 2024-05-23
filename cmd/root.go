@@ -14,8 +14,8 @@ import (
 )
 
 // rootCmd represents the base command when called without any subcommands
-func NewCmd() *cobra.Command {
-	return &cobra.Command{
+func cmd() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "node-describe",
 		Short: "node details in a user friendly manner",
 		Long: `node details in kubectl, wont allow us to get details like, how much is left and all
@@ -26,18 +26,21 @@ func NewCmd() *cobra.Command {
 			jokeTerm, _ := cmd.Flags().GetString("config")
 			constants.SetCfgFile(jokeTerm)
 			term := constants.GetCfgFile()
-			fmt.Println("testing this ", term)
+			fmt.Println("testing this root", term)
 		},
 	}
+	cmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	cmd.PersistentFlags().String("config", "", "config file (default is $HOME/.node-describe.yaml)")
+	return cmd
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	NewCmd().AddCommand(getCmd)
+	cm := cmd()
+	cm.AddCommand(getCmd)
 
-	// fmt.Println(rootCmd.Flags().GetString("config"))
-	err := NewCmd().Execute()
+	err := cm.Execute()
 	if err != nil {
 		os.Exit(1)
 	}
@@ -50,7 +53,7 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	NewCmd().Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	NewCmd().PersistentFlags().String("config", "", "config file (default is $HOME/.node-describe.yaml)")
 
 }
+
+// html templating

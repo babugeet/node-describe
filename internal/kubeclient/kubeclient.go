@@ -16,6 +16,7 @@ func NewClient() *Kubeclient {
 
 func getKubeConfig() string {
 	term := constants.GetCfgFile()
+	// fmt.Println("the term is ", term)
 	return term
 }
 

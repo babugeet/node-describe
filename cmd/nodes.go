@@ -4,7 +4,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
+	"node-describe/constants"
+	"node-describe/internal/nodes"
 
 	"github.com/spf13/cobra"
 )
@@ -25,7 +26,20 @@ to quickly create a Cobra application.`,
 		// } else {
 		// 	fmt.Println("input recieved is ", jokeTerm)
 		// }
-		fmt.Println("nodes called")
+		// fmt.Println(rootCmd.Flags().GetString("config"))
+		jokeTerm, _ := cmd.Flags().GetString("config")
+		constants.SetCfgFile(jokeTerm)
+		// _ := constants.GetCfgFile()
+		// fmt.Println("testing this nodes ", term)
+
+		// fmt.Println("nodes called")
+		// Create a new tab writer
+
+		nodes.DescribeNode()
+		// for _, j := range nodes.GetNodes() {
+		// 	fmt.Println(j.Name)
+		// }
+
 	},
 }
 
