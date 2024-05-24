@@ -42,7 +42,7 @@ func GetNodes(clientset *kubernetes.Clientset) []v1.Node {
 
 func GetPods(nodeList []v1.Node, client *kubernetes.Clientset) {
 	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', tabwriter.AlignRight)
-
+	// tabwriter.Writerzzz
 	// Write table header
 	fmt.Fprintln(writer, "Node\tCPU Request\tCPU Limit\tMemory Request\tMemory Limit\t")
 	for _, node := range nodeList {
@@ -60,14 +60,19 @@ func GetPods(nodeList []v1.Node, client *kubernetes.Clientset) {
 		}
 		// fmt.Println(nodeCPUreq, node.Status.Allocatable.Cpu().MilliValue())
 		// fmt.Println(node.Status.Allocatable.Memory().MilliValue())
-		pernodeCPUreq := float64(nodeCPUreq) / float64(node.Status.Allocatable.Cpu().MilliValue()) * 100
-		pernodeCPUlimit := float64(nodeCPUlimit) / float64(node.Status.Allocatable.Cpu().MilliValue()) * 100
-		pernodeMemReq := float64(nodeMemReq) / float64(node.Status.Allocatable.Memory().MilliValue()) * 100
-		pernodeMemLimit := float64(nodeMemLimit) / float64(node.Status.Allocatable.Memory().MilliValue()) * 100
+		pernodeCPUreq := CalPercentageUsage(nodeCPUreq, node.Status.Allocatable.Cpu().MilliValue())
+		pernodeCPUlimit := CalPercentageUsage(nodeCPUlimit, node.Status.Allocatable.Cpu().MilliValue())
+		pernodeMemReq := CalPercentageUsage(nodeMemReq, node.Status.Allocatable.Memory().MilliValue())
+		pernodeMemLimit := CalPercentageUsage(nodeMemLimit, node.Status.Allocatable.Memory().MilliValue())
 		// fmt.Print(no÷deCPUreq, nodeCPUlimit, nodeMemReq, nodeMemLimit)
 		fmt.Fprintf(writer, "%s\t%f\t%f\t%f\t%f\t\n", node.Name, pernodeCPUreq, pernodeCPUlimit, pernodeMemReq, pernodeMemLimit)
 	}
 	writer.Flush()
+}
+
+func CalPercentageUsage(nodeuse int64, nodemax int64) float64 {
+
+	return (float64(nodeuse) / float64(nodemax)) * 100
 }
 
 func GetPodsByNode(node v1.Node, client *kubernetes.Clientset) (*v1.PodList, error) {
